@@ -5,6 +5,14 @@ A beautiful, modern Flutter login screen featuring a gradient background, smooth
 ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="lib/assets/login_mobile.png" width="300" alt="Mobile Login Screen" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="lib/assets/login_web.png" width="300" alt="Web Login Screen" />
+</p>
+
 ## ✨ Features
 
 - **Elegant Gradient Background** - Soft purple gradient circle creating a premium aesthetic

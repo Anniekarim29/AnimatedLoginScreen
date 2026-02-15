@@ -14,6 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   // Color Palette
   final Color _primaryColor = const Color(0xFF7C3AED); // Violent/Purple
@@ -25,6 +26,93 @@ class _LoginScreenState extends State<LoginScreen> {
     _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _login() {
+    if (_formKey.currentState!.validate()) {
+      _showSuccessDialog();
+    }
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E293B), // Darker slate
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: _accentColor.withOpacity(0.5), width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: _accentColor.withOpacity(0.2),
+                blurRadius: 30,
+                spreadRadius: 5,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _accentColor.withOpacity(0.1),
+                ),
+                child: Icon(
+                  Icons.check_rounded,
+                  color: _accentColor,
+                  size: 40,
+                ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Success!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  shadows: [
+                    Shadow(color: _accentColor.withOpacity(0.5), blurRadius: 10),
+                  ],
+                ),
+              ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, end: 0),
+              const SizedBox(height: 8),
+              Text(
+                'Logged in successfully',
+                style: TextStyle(color: Colors.white.withOpacity(0.7)),
+              ).animate().fadeIn(delay: 300.ms),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // Navigate to next screen or perform other actions
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _accentColor,
+                    foregroundColor: Colors.black, // Dark text on teal
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Continue',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ).animate().fadeIn(delay: 400.ms).scale(begin: const Offset(0.9, 0.9)),
+            ],
+          ),
+        ).animate().scale(duration: 300.ms, curve: Curves.easeOutBack),
+      ),
+    );
   }
 
   @override
@@ -144,9 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           // Login Button
                           ElevatedButton(
-                            onPressed: () {
-                              // Login Logic
-                            },
+                            onPressed: _login,
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               backgroundColor: _primaryColor,
@@ -210,75 +296,93 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildInputFields() {
-    return Column(
-      children: [
-        // Phone Input
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
-          ),
-          child: TextField(
-            controller: _phoneController,
-            style: const TextStyle(color: Colors.white),
-            cursorColor: _accentColor,
-            decoration: InputDecoration(
-              hintText: 'Phone Number',
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
-              prefixIcon: Icon(Icons.phone_android_rounded, color: Colors.white.withOpacity(0.6)),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(16),
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          // Phone Input
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
             ),
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // Password Input
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
-          ),
-          child: TextField(
-            controller: _passwordController,
-            obscureText: _obscurePassword,
-            style: const TextStyle(color: Colors.white),
-            cursorColor: _accentColor,
-            decoration: InputDecoration(
-              hintText: 'Password',
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
-              prefixIcon: Icon(Icons.lock_rounded, color: Colors.white.withOpacity(0.6)),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                  color: Colors.white.withOpacity(0.4),
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
+            child: TextFormField(
+              controller: _phoneController,
+              style: const TextStyle(color: Colors.white),
+              cursorColor: _accentColor,
+              decoration: InputDecoration(
+                hintText: 'Phone Number',
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
+                prefixIcon: Icon(Icons.phone_android_rounded, color: Colors.white.withOpacity(0.6)),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.all(16),
               ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(16),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your phone number';
+                }
+                return null;
+              },
             ),
           ),
-        ),
-        
-        // Forgot Password
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () {},
-            child: Text(
-              'Forgot Password?',
-              style: TextStyle(color: Colors.white.withOpacity(0.5)),
+          const SizedBox(height: 16),
+
+          // Password Input
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
+            ),
+            child: TextFormField(
+              controller: _passwordController,
+              obscureText: _obscurePassword,
+              keyboardType: TextInputType.none, // Suppress soft keyboard
+              enableSuggestions: false,
+              autocorrect: false,
+              style: const TextStyle(color: Colors.white),
+              cursorColor: _accentColor,
+              decoration: InputDecoration(
+                hintText: 'Password',
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
+                prefixIcon: Icon(Icons.lock_rounded, color: Colors.white.withOpacity(0.6)),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                    color: Colors.white.withOpacity(0.4),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.all(16),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password';
+                }
+                return null;
+              },
             ),
           ),
-        ),
-      ],
+          
+          // Forgot Password
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () {},
+              child: Text(
+                'Forgot Password?',
+                style: TextStyle(color: Colors.white.withOpacity(0.5)),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
